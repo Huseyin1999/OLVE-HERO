@@ -24,8 +24,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4double rindexWorld[2] = {1.000, 1.000}; 
 
 	G4MaterialPropertiesTable *mptworld = new G4MaterialPropertiesTable();
-    //mptworld -> AddProperty("RINDEX", energy, rindexWorld, 2);
-   // WorldMat -> SetMaterialPropertiesTable(mptworld);
+    mptworld -> AddProperty("RINDEX", energy, rindexWorld, 2);
+    WorldMat -> SetMaterialPropertiesTable(mptworld);
 	//*******************************************************************************
 
 
@@ -52,10 +52,8 @@ void DetectorConstruction::CreateCalorimeter()
     BorScinmat->AddElement(nist->FindOrBuildElement("B"), 4.0 * perCent);
     G4cout <<"Bor          Rad length  = " << BorScinmat->GetRadlen() << "           Bor     nuclear = " << BorScinmat->GetNuclearInterLength () <<G4endl;
 
-	//G4double energy[2] = {1.239841939*eV/0.9, 1.239841939*eV/0.2};
-	G4double energy[2] = {1, 1};
+	G4double energy[2] = {1.239841939*eV/0.9, 1.239841939*eV/0.2};
 	G4double rindexScin[2] = {1.5, 1.5};
-	//G4double rindexScin[2] = {1., 1.};
 	G4double fraction[2] = {1.0, 1.0};
 
 	G4MaterialPropertiesTable *mptScin = new G4MaterialPropertiesTable();
@@ -81,17 +79,18 @@ void DetectorConstruction::CreateCalorimeter()
 			flogicBorScin[i][j]->SetVisAttributes(calTubeVisAtt4);
 		}
 	}
-	/*
-    flogicBorScin = new G4LogicalVolume(solidBorScin, BorScinmat, "flogicBorScin");
-	G4VisAttributes * calTubeVisAtt4 = new G4VisAttributes(G4Colour(0.,1.,0.)); 	// Instantiation of a set of visualization attributes with cyan colour
-    flogicBorScin->SetVisAttributes(calTubeVisAtt4);                             	//calTubeVisAtt3->SetForceWireframe(true); // Set the forced wireframe style
-	*/
+
 	//Without B
 	G4Material* Polyvinyltoluene = new G4Material("Polyvinyltoluene", 0.92 * g / cm3, 2); 
     Polyvinyltoluene->AddElement(nist->FindOrBuildElement("C"), 85.6 * perCent);
     Polyvinyltoluene->AddElement(nist->FindOrBuildElement("H"), 14.4 * perCent);
     G4cout <<"Plast         Rad length  = " << Polyvinyltoluene->GetRadlen() << "          Plast    nuclear = " << Polyvinyltoluene->GetNuclearInterLength () <<G4endl;
 	
+	//RINDEX
+	Polyvinyltoluene->SetMaterialPropertiesTable(mptScin);
+
+
+
 	G4Box *solidPlastScin = new G4Box("solidPlastScin", 6.25*mm, 100.*mm, 3.75*mm);
 	
 		for (int i = 0; i < n_layers_withoutB; i++)
@@ -99,13 +98,9 @@ void DetectorConstruction::CreateCalorimeter()
 		for (int j = 0; j < 16; j++) 
         {
             	flogicPlastScin[i][j] = new G4LogicalVolume(solidPlastScin, Polyvinyltoluene, "flogicPlastScin");
-				Polyvinyltoluene->SetMaterialPropertiesTable(mptScin);
 		}
 	}
-	/*
-	flogicPlastScin = new G4LogicalVolume(solidPlastScin, Polyvinyltoluene, "flogicPlastScin");
-	Polyvinyltoluene->SetMaterialPropertiesTable(mptScin);
-*/
+	
 	//*******************************************************************************
 	//Scintillator Placement 
 
@@ -156,8 +151,8 @@ void DetectorConstruction ::CreateAbsorber()
     G4cout <<"Pb          Rad length  = " << Pb->GetRadlen() << "           Pb     nuclear = " << Pb->GetNuclearInterLength () <<G4endl;
 
 	G4MaterialPropertiesTable *mptPb = new G4MaterialPropertiesTable();
-    //mptPb -> AddProperty("RINDEX", energy, rindexPb, 2);
-   // Pb -> SetMaterialPropertiesTable(mptPb);
+    mptPb -> AddProperty("RINDEX", energy, rindexPb, 2);
+    Pb -> SetMaterialPropertiesTable(mptPb);
 
 	G4Box *solidPb = new G4Box("solidPb", 100*mm, 100*mm, 1.5*mm);
     G4LogicalVolume *logicPb = new G4LogicalVolume(solidPb, Pb, "logicPb");
@@ -175,8 +170,8 @@ void DetectorConstruction ::CreateAbsorber()
     G4cout <<"Cu             Rad length  = " << Cu->GetRadlen() << "     Cu    nuclear = " << Cu->GetNuclearInterLength () <<G4endl;
 
 	G4MaterialPropertiesTable *mptCu = new G4MaterialPropertiesTable();
-    //mptCu -> AddProperty("RINDEX", energy, rindexCu, 2);
-    //Cu -> SetMaterialPropertiesTable(mptCu);
+    mptCu -> AddProperty("RINDEX", energy, rindexCu, 2);
+    Cu -> SetMaterialPropertiesTable(mptCu);
 
 	G4Box *solidCu = new G4Box("solidCu", 100*mm, 100*mm, 1.0*mm);
     G4LogicalVolume *logicCu = new G4LogicalVolume(solidCu, Cu, "logicCu");
@@ -193,10 +188,8 @@ void DetectorConstruction ::CreateAbsorber()
 
 void DetectorConstruction::CreateFibers()
 {
-	//G4double energy[2] = {1.239841939*eV/0.9, 1.239841939*eV/0.2};
-	G4double energy[2] = {1, 1};
-    G4double rindexFiber[2] = {1.4905, 1.4905};  
-    //G4double rindexFiber[2] = {1., 1.};  
+	G4double energy[2] = {1.239841939*eV/0.9, 1.239841939*eV/0.2};
+    G4double rindexFiber[2] = {1.4905, 1.4905};    
 	G4double fraction[2] = {1.0, 1.0};
 	//Poly(methyl methacrylate) (PMMA) (C5H8O2)n
 
@@ -216,17 +209,10 @@ void DetectorConstruction::CreateFibers()
 
 
 	double angle = 90.;
-	/*
-	G4RotationMatrix * RotMat = new G4RotationMatrix();
-    RotMat -> rotate((angle) *deg, G4ThreeVector(1., 0., 0.));
-    RotMat -> invert();
-	*/
+
 	G4Tubs *solidFiber = new G4Tubs("solidFiber", 0.0*mm, 0.5*mm, 100.*mm,0.0*deg, 360.0*deg);
     flogicFiber = new G4LogicalVolume(solidFiber, Fiber, "flogicFiber");
 	G4VPhysicalVolume * physFiber[n_layers_withB+n_layers_withoutB][16];
-
-	//physFiber = new G4PVPlacement(RotMat, G4ThreeVector(0.0*mm, 0.0*mm, 0.0*mm), flogicFiber, "physFiber", flogicPlastScin, false, 0, true);
-	//physFiber = new G4PVPlacement(RotMat, G4ThreeVector(0.0*mm, 0.0*mm, 0.0*mm), flogicFiber, "physFiber", flogicBorScin, false, 0, true);
 
 	for (int i = 0; i <n_layers_withoutB; i++)
     {

@@ -12,32 +12,35 @@ SteppingAction::~SteppingAction()
 void SteppingAction::UserSteppingAction(const G4Step *aStep)
 {
 	G4Track* track = aStep->GetTrack();
-	
+
+	G4int track_id = track->GetTrackID();
+
 	const G4ParticleDefinition* particleDefinition = track->GetParticleDefinition();
 	const G4String& particlename = particleDefinition->GetParticleName();	
 
 
-	G4VPhysicalVolume * PhysVol	= track->GetVolume();
+	//G4VPhysicalVolume * PhysVol	= track->GetVolume();
+/********************************************************************************************** */
+	if (track->GetTrackStatus() == 2)
+	{
+		return;
+	}
+	G4VPhysicalVolume * PhysVol	= track->GetNextVolume();
 	G4int VolN = PhysVol->GetCopyNo(); 
 	const G4String & PhysName = PhysVol->GetName();
 	const G4String LogicalVolName = PhysVol->GetLogicalVolume()->GetName();
+/********************************************************************************************** */
+
+
+
 	//G4LogicalVolume *LogicVol = PhysVol->GetMotherLogical();
 	//G4String LogicName = LogicVol->GetName();
-	
-	G4ThreeVector ObjectTranslation = PhysVol->GetTranslation();
-	
-	//const G4VProcess * CreatorProcess = track->GetCreatorProcess();
-	//const G4String ProcessName = CreatorProcess->GetProcessName();
-	//auto ProcessName = CreatorProcess->GetProcessName();
-
-	//G4ProcessType ProcessType = CreatorProcess->GetProcessType();
-
 
 	G4double pdgcharge = particleDefinition->GetPDGCharge();
 	G4int pdg = particleDefinition->GetPDGEncoding();
 
 	G4int CurrentStepNumber = track->GetCurrentStepNumber();
-	G4int track_id = track->GetTrackID();
+	
 	G4double globalTime = track->GetGlobalTime();
 
 
@@ -51,7 +54,15 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
 	G4double Energy = dParticle->GetTotalEnergy();
 
 	G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
+	
 	G4ThreeVector positionParticle = preStepPoint->GetPosition();
+/*
+	if (track_id != 1)
+	{
+		
+	}
+*/
+	
 
 	G4double trackLength = track->GetTrackLength();
 	G4double stepLength = track->GetStepLength();
@@ -70,9 +81,12 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
 */
 //#################################################################################### 	
 // HIT IN FIBER 
-	if (LogicalVolName == "flogicFiber" && particlename == "opticalphoton") 
+
+	if (LogicalVolName == "flogicFiber" && particlename == "opticalphoton") // 711031       track_id == 711031
 	{
 		fEventAction->AddScinCount();
+		//G4cout << "prestep_name: " << prestep_name << ", poststep_name: " << poststep_name << ", track_id: " << track_id << ", CurrentStepNumber: " << CurrentStepNumber << ", LogicalVolName: " << LogicalVolName << ", particlename: " << particlename << ", pdg: " << pdg << ", PhysName: " << PhysName << ", nextPhysName: " << nextPhysName << ", CreatorProcess: " << CreatorProcess << G4endl;
+		//G4cout << "particlename  = " << particlename << " , PhysVol = " << VolN << " , track_id = " << track_id << G4endl<< G4endl;
 		fEventAction->fScintInfo[0].push_back(globalTime); //nanoseconds
 		fEventAction->fScintInfo[1].push_back(VolN);
 		track->SetTrackStatus(fStopAndKill);

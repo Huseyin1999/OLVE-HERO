@@ -17,6 +17,7 @@ void EventAction::BeginOfEventAction(const G4Event* ev)
 
 void EventAction::EndOfEventAction(const G4Event* ev)
 {
+    G4cout << "END OF EVENT" << G4endl;
     G4int n_event = ev->GetEventID();
 	G4AnalysisManager* man = G4AnalysisManager::Instance();
 	G4cout << n_event << "End of event "  <<  " ,  ScinCount  =  " << ScinCount<< G4endl << G4endl;
