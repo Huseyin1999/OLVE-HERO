@@ -97,6 +97,7 @@ void DetectorConstruction::CreateCalorimeter()
 	{
 		for (int j = 0; j < 16; j++) 
         {
+            	//flogicPlastScin[i][j] = new G4LogicalVolume(solidPlastScin, BorScinmat, "flogicPlastScin");
             	flogicPlastScin[i][j] = new G4LogicalVolume(solidPlastScin, Polyvinyltoluene, "flogicPlastScin");
 		}
 	}

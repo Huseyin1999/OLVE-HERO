@@ -10,6 +10,12 @@ RunAction::RunAction()
 
 	man->CreateNtuple("TimeScintillation", "TimeScintillation");
 	man->CreateNtupleDColumn("Time");
+	man->CreateNtupleDColumn("X");
+	man->CreateNtupleDColumn("Y");
+	man->CreateNtupleDColumn("Z");
+	man->CreateNtupleDColumn("Px");
+	man->CreateNtupleDColumn("Py");
+	man->CreateNtupleDColumn("Pz");
 	man->CreateNtupleIColumn("FiberID");
 	man->CreateNtupleIColumn("EventID");
 	man->FinishNtuple(1);

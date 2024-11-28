@@ -2,7 +2,7 @@
 
 EventAction::EventAction(RunAction*)
 {
-    fScintInfo = { {0, {}}, {1, {}},};
+    fScintInfo = { {0, {}}, {1, {}}, {2, {}}, {3, {}}, {4, {}}, {5, {}}, {6, {}}, {7, {}},};
 }
 EventAction::~EventAction()
 {}
@@ -12,7 +12,8 @@ void EventAction::BeginOfEventAction(const G4Event* ev)
     ScinCount = 0;
     ElectronCount = 0;
 
-    fScintInfo = { {0, {}}, {1, {}},};
+    fScintInfo = { {0, {}}, {1, {}}, {2, {}}, {3, {}}, {4, {}}, {5, {}}, {6, {}}, {7, {}},};
+
 }
 
 void EventAction::EndOfEventAction(const G4Event* ev)
@@ -30,8 +31,14 @@ void EventAction::EndOfEventAction(const G4Event* ev)
     for (G4int i = 0; i < Scint_info_size; i++)
     {
         man->FillNtupleDColumn(1, 0, fScintInfo[0][i]);     
-	    man->FillNtupleIColumn(1, 1, fScintInfo[1][i]);
-	    man->FillNtupleIColumn(1, 2, n_event);
+	    man->FillNtupleDColumn(1, 1, fScintInfo[1][i]);
+	    man->FillNtupleDColumn(1, 2, fScintInfo[2][i]);
+	    man->FillNtupleDColumn(1, 3, fScintInfo[3][i]);
+	    man->FillNtupleDColumn(1, 4, fScintInfo[4][i]);
+	    man->FillNtupleDColumn(1, 5, fScintInfo[5][i]);
+	    man->FillNtupleDColumn(1, 6, fScintInfo[6][i]);
+	    man->FillNtupleIColumn(1, 7, fScintInfo[7][i]);
+	    man->FillNtupleIColumn(1, 8, n_event);
         man->AddNtupleRow(1);
     }
 

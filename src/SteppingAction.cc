@@ -19,16 +19,21 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
 	const G4String& particlename = particleDefinition->GetParticleName();	
 
 
-	//G4VPhysicalVolume * PhysVol	= track->GetVolume();
+	G4VPhysicalVolume * PhysVolNorm	= track->GetVolume();
 /********************************************************************************************** */
 	if (track->GetTrackStatus() == 2)
 	{
+		G4cout << "PhysVolNorm  = " << PhysVolNorm->GetName() << " , particlename = " << particlename <<G4endl;
 		return;
 	}
+	//G4VPhysicalVolume * PhysVol	= track->GetVolume();
 	G4VPhysicalVolume * PhysVol	= track->GetNextVolume();
 	G4int VolN = PhysVol->GetCopyNo(); 
 	const G4String & PhysName = PhysVol->GetName();
 	const G4String LogicalVolName = PhysVol->GetLogicalVolume()->GetName();
+
+	
+
 /********************************************************************************************** */
 
 
@@ -38,9 +43,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
 
 	G4double pdgcharge = particleDefinition->GetPDGCharge();
 	G4int pdg = particleDefinition->GetPDGEncoding();
-
 	G4int CurrentStepNumber = track->GetCurrentStepNumber();
-	
 	G4double globalTime = track->GetGlobalTime();
 
 
@@ -54,15 +57,12 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
 	G4double Energy = dParticle->GetTotalEnergy();
 
 	G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
-	
-	G4ThreeVector positionParticle = preStepPoint->GetPosition();
-/*
-	if (track_id != 1)
-	{
-		
-	}
-*/
-	
+	G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
+
+
+	G4ThreeVector positionParticle = postStepPoint->GetPosition();
+	G4ThreeVector MomentumParticle = postStepPoint->GetMomentum();
+
 
 	G4double trackLength = track->GetTrackLength();
 	G4double stepLength = track->GetStepLength();
@@ -82,13 +82,18 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
 //#################################################################################### 	
 // HIT IN FIBER 
 
-	if (LogicalVolName == "flogicFiber" && particlename == "opticalphoton") // 711031       track_id == 711031
+	if (LogicalVolName == "flogicFiber" && particlename == "opticalphoton") //
 	{
 		fEventAction->AddScinCount();
-		//G4cout << "prestep_name: " << prestep_name << ", poststep_name: " << poststep_name << ", track_id: " << track_id << ", CurrentStepNumber: " << CurrentStepNumber << ", LogicalVolName: " << LogicalVolName << ", particlename: " << particlename << ", pdg: " << pdg << ", PhysName: " << PhysName << ", nextPhysName: " << nextPhysName << ", CreatorProcess: " << CreatorProcess << G4endl;
-		//G4cout << "particlename  = " << particlename << " , PhysVol = " << VolN << " , track_id = " << track_id << G4endl<< G4endl;
+
 		fEventAction->fScintInfo[0].push_back(globalTime); //nanoseconds
-		fEventAction->fScintInfo[1].push_back(VolN);
+		fEventAction->fScintInfo[1].push_back(positionParticle[0]);
+		fEventAction->fScintInfo[2].push_back(positionParticle[1]);
+		fEventAction->fScintInfo[3].push_back(positionParticle[2]);
+		fEventAction->fScintInfo[4].push_back(MomentumParticle[0]);
+		fEventAction->fScintInfo[5].push_back(MomentumParticle[1]);
+		fEventAction->fScintInfo[6].push_back(MomentumParticle[2]);
+		fEventAction->fScintInfo[7].push_back(VolN);
 		track->SetTrackStatus(fStopAndKill);
 		return;
 	}
@@ -96,26 +101,10 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
 
 
 //#################################################################################### 	
-	// All steps info
-	/*
-	if (pdg == 11 && CurrentStepNumber == 1) 
-	{
-		fEventAction->AddElectronCount();
-	}
-	G4int ElectronCount = fEventAction->GetElectronCount();
-	if (ElectronCount % 1000 == 0)
-	{
-		G4cout << ElectronCount << ", CreatorProcess: " << CreatorProcess << G4endl;
-	}
-	*/
+
 //#################################################################################### 	
 	
-	/*
-	if (CurrentStepNumber == 1)
-	{
-		G4cout << "track_id: " << track_id << ", energy: " << kinEnergy << G4endl;	
-	}
-	*/	
+
 	
 	/*****************************************************/
 	// kill the particle
