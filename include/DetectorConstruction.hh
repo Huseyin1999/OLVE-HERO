@@ -28,8 +28,10 @@ public:
 	void CreateCalorimeter();
 	void CreateAbsorber();
 	void CreateFibers();
+	void CreateTarget();
 
-	const static G4int n_layers_withB= 10;
+	//const static G4int n_layers_withB= 10;
+	const static G4int n_layers_withB= 80;
 	const static G4int n_layers_withoutB= 20;
 
 private:
@@ -37,6 +39,9 @@ private:
 	G4LogicalVolume* flogicBorScin[n_layers_withB][16];
     G4LogicalVolume* flogicPlastScin[n_layers_withoutB][16];
     G4LogicalVolume* flogicFiber;
+
+
+	
 
 	G4Material *Fiber;
 	G4Element *C, *H, *O;

@@ -38,7 +38,30 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	CreateAbsorber();
 	CreateFibers();
 
+	CreateTarget();
+
 	return physWorld;
+}
+
+
+void DetectorConstruction::CreateTarget()
+{
+//##############################################################################################
+	// Material for target, without optical properties
+	G4Material* PolyvinyltolueneTarget = new G4Material("PolyvinyltolueneTarget", 0.92 * g / cm3, 2); 
+    PolyvinyltolueneTarget->AddElement(nist->FindOrBuildElement("C"), 85.6 * perCent);
+    PolyvinyltolueneTarget->AddElement(nist->FindOrBuildElement("H"), 14.4 * perCent);
+//##############################################################################################
+
+	
+
+//##############################################################################################
+	// creating Volumes 
+    G4Box* solidtargetPol = new G4Box("solidtargetPol", 100 * mm, 100 * mm, 60 * mm);
+	G4LogicalVolume *logictargetPol = new G4LogicalVolume(solidtargetPol, PolyvinyltolueneTarget, "logictargetPol");
+    G4VPhysicalVolume* phystargetPol = new G4PVPlacement(0, G4ThreeVector(0., 0., -60 * mm), logictargetPol, "phystargetPol", flogicWorld, false, 0, true);
+//##############################################################################################
+
 }
 
 void DetectorConstruction::CreateCalorimeter()
@@ -52,6 +75,17 @@ void DetectorConstruction::CreateCalorimeter()
     BorScinmat->AddElement(nist->FindOrBuildElement("B"), 4.0 * perCent);
     G4cout <<"Bor          Rad length  = " << BorScinmat->GetRadlen() << "           Bor     nuclear = " << BorScinmat->GetNuclearInterLength () <<G4endl;
 
+
+
+
+	//Without B
+	G4Material* Polyvinyltoluene = new G4Material("Polyvinyltoluene", 0.92 * g / cm3, 2); 
+    Polyvinyltoluene->AddElement(nist->FindOrBuildElement("C"), 85.6 * perCent);
+    Polyvinyltoluene->AddElement(nist->FindOrBuildElement("H"), 14.4 * perCent);
+    G4cout <<"Plast         Rad length  = " << Polyvinyltoluene->GetRadlen() << "          Plast    nuclear = " << Polyvinyltoluene->GetNuclearInterLength () <<G4endl;
+	
+	//RINDEX
+	/*/////////////////////////////////////////////////////////////////////////////////////////*/
 	G4double energy[2] = {1.239841939*eV/0.9, 1.239841939*eV/0.2};
 	G4double rindexScin[2] = {1.5, 1.5};
 	G4double fraction[2] = {1.0, 1.0};
@@ -65,31 +99,21 @@ void DetectorConstruction::CreateCalorimeter()
     mptScin->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 250.*ns);
     mptScin->AddConstProperty("SCINTILLATIONYIELD1",1.);
     BorScinmat->SetMaterialPropertiesTable(mptScin);
+	Polyvinyltoluene->SetMaterialPropertiesTable(mptScin);
+	/*/////////////////////////////////////////////////////////////////////////////////////////*/
 
 	G4Box *solidBorScin = new G4Box("solidBorScin", 6.25*mm, 100.*mm, 3.75*mm);
 	
-	G4cout << "RARARARARARARARARARARRRRRRRRRRRRRRRRR" <<G4endl;
-
 	for (int i = 0; i < n_layers_withB; i++)
 	{
 		for (int j = 0; j < 16; j++) 
         {
+            //flogicBorScin[i][j] = new G4LogicalVolume(solidBorScin, Polyvinyltoluene, "flogicBorScin");
             flogicBorScin[i][j] = new G4LogicalVolume(solidBorScin, BorScinmat, "flogicBorScin");
 			G4VisAttributes * calTubeVisAtt4 = new G4VisAttributes(G4Colour(0.,1.,0.)); 	// Instantiation of a set of visualization attributes with cyan colour
 			flogicBorScin[i][j]->SetVisAttributes(calTubeVisAtt4);
 		}
 	}
-
-	//Without B
-	G4Material* Polyvinyltoluene = new G4Material("Polyvinyltoluene", 0.92 * g / cm3, 2); 
-    Polyvinyltoluene->AddElement(nist->FindOrBuildElement("C"), 85.6 * perCent);
-    Polyvinyltoluene->AddElement(nist->FindOrBuildElement("H"), 14.4 * perCent);
-    G4cout <<"Plast         Rad length  = " << Polyvinyltoluene->GetRadlen() << "          Plast    nuclear = " << Polyvinyltoluene->GetNuclearInterLength () <<G4endl;
-	
-	//RINDEX
-	Polyvinyltoluene->SetMaterialPropertiesTable(mptScin);
-
-
 
 	G4Box *solidPlastScin = new G4Box("solidPlastScin", 6.25*mm, 100.*mm, 3.75*mm);
 	
@@ -97,8 +121,8 @@ void DetectorConstruction::CreateCalorimeter()
 	{
 		for (int j = 0; j < 16; j++) 
         {
-            	//flogicPlastScin[i][j] = new G4LogicalVolume(solidPlastScin, BorScinmat, "flogicPlastScin");
-            	flogicPlastScin[i][j] = new G4LogicalVolume(solidPlastScin, Polyvinyltoluene, "flogicPlastScin");
+            	flogicPlastScin[i][j] = new G4LogicalVolume(solidPlastScin, BorScinmat, "flogicPlastScin");
+            	//flogicPlastScin[i][j] = new G4LogicalVolume(solidPlastScin, Polyvinyltoluene, "flogicPlastScin");
 		}
 	}
 	

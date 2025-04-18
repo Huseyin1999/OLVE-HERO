@@ -26,11 +26,13 @@ void PrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 
 	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
 	G4IonTable* Iontable = particleTable->GetIonTable();
-	G4ParticleDefinition* particle = particleTable->FindParticle(11);  // electron
-	//G4ParticleDefinition* particle = particleTable->FindParticle(2212);  // proton
+	//G4ParticleDefinition* particle = particleTable->FindParticle(11);  // electron
+	//G4ParticleDefinition* particle = particleTable->FindParticle(22);  // gamma
+	//G4ParticleDefinition* particle = particleTable->FindParticle(2112);  // neutron
+	G4ParticleDefinition* particle = particleTable->FindParticle(2212);  // proton
 
 
-	G4ThreeVector pos(0.*m,0., -100.*mm); 
+	G4ThreeVector pos(0.*m,0., -125.*mm); 
     G4ThreeVector mom(0., 0., 1.);
 
     //G4double PrimaryEnergy = 1*GeV;

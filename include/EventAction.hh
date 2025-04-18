@@ -36,13 +36,23 @@ public:
 	{
 		return ElectronCount;
 	}
+	void AddDep_Energy(double depE) 
+	{
+		Dep_Energy += depE; 
+	}
+	G4double GetDep_Energy()
+	{
+		return Dep_Energy;
+	}
 
 	std::map<int, std::vector<double>> fScintInfo;
+	std::map<int, std::vector<double>> fAlphaInfo;
 
 
 private:
 	G4int ScinCount;
 	G4int ElectronCount;
+	G4double Dep_Energy;
 };
 
 #endif
